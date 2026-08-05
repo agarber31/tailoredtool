@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 120" width="560" height="120">
+  <!-- Single-color variant: works anywhere, any background via recolor -->
+  <g fill="#7b6cff">
+    <rect x="20" y="24" width="72" height="16" rx="4"/>
+    <rect x="48" y="24" width="16" height="72" rx="4"/>
+    <rect x="64" y="56" width="40" height="14" rx="4" opacity="0.65"/>
+    <rect x="76" y="56" width="14" height="40" rx="4" opacity="0.65"/>
+  </g>
+  <text x="136" y="76" font-family="Inter, -apple-system, sans-serif" font-size="42" font-weight="800" letter-spacing="-1.5" fill="#7b6cff">Tailored Tool</text>
+</svg>
