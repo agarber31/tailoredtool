@@ -244,6 +244,58 @@
 
   .spec-err{ font-size:15.5px; line-height:1.7; color:var(--text); }
 
+  /* ---------- 3D CAROUSEL ---------- */
+  .carousel-scene{
+    position:relative; height:400px; margin:10px -5vw 0;
+    perspective:1400px; perspective-origin:50% 45%;
+    overflow:hidden;
+  }
+  .carousel-scene::before,
+  .carousel-scene::after{
+    content:""; position:absolute; top:0; bottom:0; width:18%; z-index:5; pointer-events:none;
+  }
+  .carousel-scene::before{ left:0; background:linear-gradient(90deg, var(--bg) 12%, transparent); }
+  .carousel-scene::after{ right:0; background:linear-gradient(270deg, var(--bg) 12%, transparent); }
+
+  .carousel-ring{
+    position:absolute; top:50%; left:50%; width:0; height:0;
+    transform-style:preserve-3d;
+    animation:ring-spin 46s linear infinite;
+  }
+  .carousel-scene:hover .carousel-ring,
+  .carousel-scene:focus-within .carousel-ring{ animation-play-state:paused; }
+  @keyframes ring-spin{ from{ transform:rotateY(0deg); } to{ transform:rotateY(-360deg); } }
+
+  .card3d{
+    position:absolute; width:246px; height:290px; left:-123px; top:-145px;
+    background:var(--surface); border:1px solid var(--border); border-radius:16px;
+    padding:24px 22px; display:flex; flex-direction:column; justify-content:space-between;
+    backface-visibility:hidden;
+    box-shadow:0 18px 44px rgba(0,0,0,0.55);
+    transition:border-color 0.25s;
+  }
+  .card3d:hover{ border-color:var(--indigo); }
+  .card3d .c-type{
+    font-size:11px; font-weight:700; letter-spacing:1.1px; text-transform:uppercase;
+    color:var(--cyan); margin-bottom:12px;
+  }
+  .card3d .c-title{ font-size:19px; font-weight:800; letter-spacing:-0.4px; line-height:1.2; margin-bottom:10px; }
+  .card3d .c-desc{ font-size:13.5px; color:var(--muted); line-height:1.55; }
+  .card3d .c-foot{
+    font-size:12px; color:var(--dim); padding-top:14px; border-top:1px solid var(--border);
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .card3d .c-foot b{ color:var(--indigo-bright); font-weight:700; }
+
+  @media(max-width:700px){
+    .carousel-scene{ height:340px; perspective:1000px; }
+    .card3d{ width:210px; height:255px; left:-105px; top:-127px; padding:20px 18px; }
+    .card3d .c-title{ font-size:17px; }
+  }
+  @media(prefers-reduced-motion:reduce){
+    .carousel-ring{ animation:none; }
+  }
+
   /* ---------- LIVE BUILD ---------- */
   .build-cta{
     background:linear-gradient(135deg, rgba(123,108,255,0.16), rgba(79,216,232,0.10));
@@ -457,40 +509,11 @@
 
 <section id="work">
   <div class="sec-tag reveal">Our work</div>
-  <h2 class="reveal">Systems we've already built.</h2>
-  <p class="sec-lede reveal">Every one of these is real and working — not a mockup. This is the kind of thing your project becomes.</p>
+  <h2 class="reveal">The kind of thing we build.</h2>
+  <p class="sec-lede reveal">Yours won't be one of these — it'll be built for your business specifically. But this is the shape of it, and what it costs.</p>
 
-  <div class="work-grid">
-    <div class="work-card reveal">
-      <div class="type">Customer-facing</div>
-      <h3>Writing Assistant</h3>
-      <p>Built for a greeting-card retailer — helps shoppers write a personalized message in seconds, always in the brand's voice.</p>
-    </div>
-    <div class="work-card reveal">
-      <div class="type">Retail</div>
-      <h3>Product Finder</h3>
-      <p>Reads what a shopper actually wants and puts the right product in front of them in one exchange. No filters, no digging.</p>
-    </div>
-    <div class="work-card reveal">
-      <div class="type">Retail</div>
-      <h3>Size &amp; Fit Advisor</h3>
-      <p>Cuts returns by answering "will this fit me?" before checkout, using real product data instead of guesswork.</p>
-    </div>
-    <div class="work-card reveal">
-      <div class="type">Operations</div>
-      <h3>Dispatch &amp; Booking Agent</h3>
-      <p>Catches a missed call within seconds, figures out how urgent it is, and books the appointment automatically.</p>
-    </div>
-    <div class="work-card reveal">
-      <div class="type">Customer-facing</div>
-      <h3>Shopping Assistant</h3>
-      <p>A live concierge on your site that answers product questions instantly instead of pointing people at a search bar.</p>
-    </div>
-    <div class="work-card reveal">
-      <div class="type">Custom</div>
-      <h3>Yours, next</h3>
-      <p>These are examples, not limits. Whatever your business actually needs is what gets built.</p>
-    </div>
+  <div class="carousel-scene" id="carouselScene" aria-label="Examples of tools we build">
+    <div class="carousel-ring" id="carouselRing"></div>
   </div>
 </section>
 
@@ -873,6 +896,47 @@ function resetScan(openFallback){
     si.value = ''; si.focus();
   }
 }
+
+
+// ---- 3D carousel ----
+const CAROUSEL_CARDS = [
+  { type:'Customer-facing', title:'Writing Assistant', desc:'Helps shoppers write a personal message in seconds, always in the brand voice.', tier:'Standard', price:'$1,500' },
+  { type:'Retail',          title:'Product Finder',    desc:'Reads what a shopper actually wants and puts the right product in front of them.', tier:'Simple', price:'$950' },
+  { type:'Operations',      title:'Dispatch Agent',    desc:'Catches a missed call in seconds, works out how urgent it is, and books the job.', tier:'Advanced', price:'$2,800' },
+  { type:'Retail',          title:'Size & Fit Advisor',desc:'Answers "will this fit me?" before checkout, so fewer orders come back.', tier:'Standard', price:'$1,500' },
+  { type:'Customer-facing', title:'Shopping Assistant',desc:'A concierge on your site that answers product questions instantly.', tier:'Standard', price:'$1,500' },
+  { type:'Bookings',        title:'Appointment Setter',desc:'Takes a request, checks the calendar, and confirms the slot without you touching it.', tier:'Advanced', price:'$2,800' },
+  { type:'Lead capture',    title:'Quote Builder',     desc:'Asks the right questions, then hands you a qualified lead with the details filled in.', tier:'Simple', price:'$950' },
+  { type:'Support',         title:'FAQ Answerer',      desc:'Answers the same twelve questions your inbox gets every week, day and night.', tier:'Simple', price:'$950' }
+];
+
+function buildCarousel(){
+  const ring = document.getElementById('carouselRing');
+  if(!ring) return;
+
+  const n = CAROUSEL_CARDS.length;
+  const step = 360 / n;
+  const cardW = window.innerWidth < 700 ? 210 : 246;
+  // radius that spaces cards evenly around the cylinder without overlap
+  const radius = Math.round((cardW * 1.28) / (2 * Math.tan(Math.PI / n)));
+
+  ring.innerHTML = CAROUSEL_CARDS.map((c, i) => `
+    <article class="card3d" style="transform:rotateY(${i * step}deg) translateZ(${radius}px)">
+      <div>
+        <div class="c-type">${c.type}</div>
+        <div class="c-title">${c.title}</div>
+        <p class="c-desc">${c.desc}</p>
+      </div>
+      <div class="c-foot"><span>${c.tier}</span><b>${c.price}</b></div>
+    </article>`).join('');
+}
+
+buildCarousel();
+let carouselResize;
+window.addEventListener('resize', ()=>{
+  clearTimeout(carouselResize);
+  carouselResize = setTimeout(buildCarousel, 200);
+});
 
 // scroll reveal
 const io = new IntersectionObserver((entries)=>{
